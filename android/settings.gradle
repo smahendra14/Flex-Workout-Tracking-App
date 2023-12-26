@@ -1,4 +1,35 @@
-rootProject.name = 'workout_tracker'
+// rootProject.name = 'workout_tracker'
+// apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+// include ':app'
+// includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// everything below was added based on instruction from ChatGPT 
+
+rootProject.name = 'workout-tracker'
+
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
 include ':app'
+
 includeBuild('../node_modules/@react-native/gradle-plugin')
+
+include ':react-native-vector-icons'
+project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
+
+include ':react-native-firebase'
+project(':react-native-firebase').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/android')
+
+// renamed using _ instead of - because i was getting a build error when using the - since 
+// a - is not allowed to be in the name
+
+include ':react_native_firebase_app'
+project(':react_native_firebase_app').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/app/android')
+
+include ':react_native_firebase_auth'
+project(':react_native_firebase_auth').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/auth/android')
+
+include ':react_native_firebase_database'
+project(':react_native_firebase_database').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/database/android')
+
+include ':app'
+
