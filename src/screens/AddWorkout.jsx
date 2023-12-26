@@ -1,19 +1,13 @@
-import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
-// navigation 
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {RootStackParamList} from '../App'
-import FormikNewExercise from './FormikNewExercise'
-
-type AddWorkoutProps = NativeStackScreenProps<RootStackParamList, 'AddWorkout'>
+import FormikNewExercise from './FormikNewExercise';
 
 // firebase
-import * as firebase from '../firebase';
 import firestore from '@react-native-firebase/firestore';
 
 
-const AddWorkout = ({navigation}: AddWorkoutProps) => {
+const AddWorkout = ({navigation}) => {
 
   const [exercises, setExercises] = useState([]);
 
@@ -92,7 +86,7 @@ const AddWorkout = ({navigation}: AddWorkoutProps) => {
           </TouchableOpacity>
         </View>
         <View style={styles.exerciseCardsContainer}>
-          {exercises[0] ? null : 
+          {exercises[0] ? null :
             <Text style={styles.emptyText}>Your exercises will appear here when added </Text>
           }
           <FlatList
@@ -121,8 +115,8 @@ const AddWorkout = ({navigation}: AddWorkoutProps) => {
         </TouchableOpacity>
         </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default AddWorkout;
 
@@ -130,7 +124,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
-  }, 
+  },
   buttonContainer: {
   },
   addButton: {
@@ -161,17 +155,17 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     padding: 10,
-  }, 
+  },
   exerciseCardTitle: {
     fontSize: 24,
-  }, 
+  },
   saveContainer: {
     flex: 1,
   },
   saveButton: {
     backgroundColor: '#8a1111',
     margin: 15,
-  }, 
+  },
   saveButtonText: {
     color: 'white',
     textAlign: 'center',
@@ -190,4 +184,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.6,
   },
-})
+});

@@ -62,7 +62,6 @@ const History = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-
     },
     headerText: {
         textAlign: 'center',
@@ -93,6 +92,6 @@ const styles = StyleSheet.create({
       color: 'white',
       paddingVertical: 5,
     },
-})
+});
 
 export default History;

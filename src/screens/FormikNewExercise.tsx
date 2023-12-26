@@ -18,7 +18,7 @@ const exerciseSchema = Yup.object().shape({
     //
 
 // Firestore
-import firestore from "@react-native-firebase/firestore"
+import firestore from '@react-native-firebase/firestore';
 
 
 const FormikNewExercise = ({navigation}) => {
@@ -30,13 +30,13 @@ const FormikNewExercise = ({navigation}) => {
     const storeExerciseInfo = (values) => {
         firestore().collection('exercises').add({
             name: capitalizeEachWord(values.name),
-            reps: parseInt(values.reps),
-            sets: parseInt(values.sets),
+            reps: parseInt(values.reps, 10),
+            sets: parseInt(values.sets, 10),
             weight: parseFloat(values.weight),
-            rest: parseInt(values.rest),
+            rest: parseInt(values.rest, 10),
             notes: values.notes,
-        })
-    }
+        });
+    };
 
     return (
     <SafeAreaView style={styles.container}>
@@ -49,27 +49,24 @@ const FormikNewExercise = ({navigation}) => {
        onSubmit={ values => {
         console.log(values);
         storeExerciseInfo(values);
-        navigation.navigate(AddWorkout)
+        navigation.navigate(AddWorkout);
        }}
      >
        {({
          values,
-         errors,
-         touched,
          isValid,
          handleChange,
          handleSubmit,
-         /* and other goodies */
        }) => (
          <>
-            <TextInput 
+            <TextInput
                 style={styles.wideInput}
                 placeholder="Exercise Name"
                 value={values.name}
                 onChangeText={handleChange('name')}
             />
             <View style={styles.halfInputContainer}>
-                <TextInput 
+                <TextInput
                     style={styles.halfInput}
                     placeholder="Sets"
                     keyboardType="numeric"
@@ -85,14 +82,14 @@ const FormikNewExercise = ({navigation}) => {
                 />
             </View>
             <View style={styles.halfInputContainer}>
-                <TextInput 
+                <TextInput
                     style={styles.halfInput}
                     placeholder="Weight"
                     keyboardType="numeric"
                     value={values.weight}
                     onChangeText={handleChange('weight')}
                 />
-                <TextInput 
+                <TextInput
                     style={styles.halfInput}
                     placeholder="Rest (sec.)"
                     keyboardType="numeric"
@@ -101,7 +98,7 @@ const FormikNewExercise = ({navigation}) => {
 
                 />
             </View>
-            <TextInput 
+            <TextInput
                 style={styles.wideInput}
                 placeholder="Notes"
                 multiline
@@ -124,7 +121,7 @@ const FormikNewExercise = ({navigation}) => {
   );
 };
 
-export default FormikNewExercise
+export default FormikNewExercise;
 
 const styles = StyleSheet.create({
     container: {

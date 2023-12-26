@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {SafeAreaView, Text} from 'react-native';
-
 //Navigation
-import {NavigationContainer} from "@react-navigation/native";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 //screens
 import Home from './screens/Home';
@@ -26,29 +22,29 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
     return (
         <NavigationContainer>
-            <Stack.Navigator 
-                initialRouteName='Home'
+            <Stack.Navigator
+                initialRouteName="Home"
                 screenOptions={{
                     headerShown: false,
                 }}>
                 <Stack.Screen
-                    name='Home'
+                    name="Home"
                     component={Home}
                 />
                 <Stack.Screen
-                    name='AddWorkout'
+                    name="AddWorkout"
                     component={AddWorkout}
                 />
                 <Stack.Screen
-                    name='FormikNewExercise'
+                    name="FormikNewExercise"
                     component={FormikNewExercise}
                 />
                 <Stack.Screen
-                    name='History'
+                    name="History"
                     component={History}
                 />
             </Stack.Navigator>
-        </NavigationContainer>    
+        </NavigationContainer>
     );
 }
 

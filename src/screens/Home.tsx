@@ -1,38 +1,38 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
 
-// navigation 
-import {NativeStackScreenProps} from "@react-navigation/native-stack"
-import {RootStackParamList} from '../App'
+// navigation
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../App';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>
 
 const Home = ({navigation}: HomeProps) => {
   return (
     <SafeAreaView style={styles.container}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.newWorkoutButton}
-          onPress={() => navigation.navigate("AddWorkout")}>
+          onPress={() => navigation.navigate('AddWorkout')}>
             <Text style={styles.newWorkoutText}>Start Workout</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.newWorkoutButton}
           onPress={() => navigation.navigate('History')}>
             <Text style={styles.newWorkoutText}>View History</Text>
         </TouchableOpacity>
     </SafeAreaView>
 
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF',
         justifyContent: 'center',
-    }, 
+    },
     newWorkoutButton: {
       backgroundColor: '#D9D9D9',
       margin: 15,
@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
       paddingVertical: 5,
 
     },
-})
+});
