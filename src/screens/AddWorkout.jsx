@@ -1,5 +1,6 @@
 import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 
 import FormikNewExercise from './FormikNewExercise';
 
@@ -67,9 +68,13 @@ const AddWorkout = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // allows for exercises to be loaded whenever screen comes into focus,
+  // instead of just when the screen is first loaded
+  useFocusEffect(
+    React.useCallback(() => {
+      getData();
+    }, [])
+  );
 
 
   return (
