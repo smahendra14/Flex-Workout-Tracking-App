@@ -1,5 +1,5 @@
 # Flex: Workout Tracker
-A mobile app that allows users to keep track of their progress in the gym by logging their workouts. 
+A mobile app that allows users to keep track of their progress in the gym by logging their current workouts and seeing their workout history. 
 
 # Frontend 
 The frontend of the app was built using React Native CLI. React Navigation's Stack Navigator was used to allow users to move between different screens of the app. Formik and Yup schema validation were used to ensure user's were properly inputting their workout information when prompted. 
