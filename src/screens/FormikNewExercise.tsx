@@ -13,10 +13,8 @@ const exerciseSchema = Yup.object().shape({
     reps: Yup.number().required('Number of reps is required').positive().integer(),
     sets: Yup.number().required('Number of sets is required').positive().integer(),
     weight: Yup.number().required('Weight is required').min(0, 'Weight can not be negative'),
-    rest: Yup.number().required('Rest is required').positive().integer(),
+    rest: Yup.number().required('Rest is required').min(0, 'Rest can not be negative').integer(),
 });
-    //
-
 // Firestore
 import firestore from '@react-native-firebase/firestore';
 
