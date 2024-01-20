@@ -19,10 +19,10 @@ const muscleGroupData = [
 // props interface 
 interface DropdownComponentProps {
     setIsMuscleSelected: (isSelected: boolean) => void;
-  
+    setMuscleGroup: (muscleGroup: string) => void;
 }
 
-const DropdownComponent: React.FC<DropdownComponentProps> = ({ setIsMuscleSelected }) => {
+const DropdownComponent: React.FC<DropdownComponentProps> = ({ setIsMuscleSelected, setMuscleGroup }) => {
 
     const [value, setValue] = useState(null);
 
@@ -52,6 +52,7 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ setIsMuscleSelect
           onChange={item => {
             setValue(item.value);
             setIsMuscleSelected(true);
+            setMuscleGroup(item.value)
           }}
         //   renderLeftIcon={() => (
         //     <AntDesign style={styles.icon} color="black" name="Safety" size={20} />

@@ -25,10 +25,15 @@ import firestore from '@react-native-firebase/firestore';
 const FormikNewExercise = ({navigation}) => {
 
     const [isMuscleSelected, setIsMuscleSelected] = useState(false);
+    const [muscleGroup, setMuscleGroup] = useState();
 
     const updateIsMuscleSelected = (isSelected : boolean) => {
         setIsMuscleSelected(isSelected);
-      };
+    };
+
+    const updateMuscleGroup = (muscleGroup : string) => {
+        setMuscleGroup(muscleGroup);
+    };
 
     const capitalizeEachWord = (str) => {
         return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
@@ -36,7 +41,7 @@ const FormikNewExercise = ({navigation}) => {
 
     const storeExerciseInfo = (values) => {
         firestore().collection('exercises').add({
-            muscleGroup: DropdownComponent,
+            muscleGroup: muscleGroup,
             name: capitalizeEachWord(values.name),
             reps: parseInt(values.reps, 10),
             sets: parseInt(values.sets, 10),
@@ -53,7 +58,7 @@ const FormikNewExercise = ({navigation}) => {
       <Text style={styles.headerText}>
         Complete the Fields Below to Add a New Exercise to Your Workout
       </Text>
-      <DropdownComponent setIsMuscleSelected={updateIsMuscleSelected}/>
+      <DropdownComponent setIsMuscleSelected={updateIsMuscleSelected} setMuscleGroup={updateMuscleGroup}/>
       <Formik
        initialValues={{ name: '', reps: '', sets: '', weight: '', rest: '', notes: ''}}
        validationSchema={exerciseSchema}
