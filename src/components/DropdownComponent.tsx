@@ -46,7 +46,7 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ setIsMuscleSelect
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder="Select muscle group"
+          placeholder="Select Muscle Group"
           searchPlaceholder="Search muscle group..."
           value={value}
           onChange={item => {
