@@ -41,7 +41,7 @@ const FormikNewExercise = ({navigation}) => {
 
     const storeExerciseInfo = (values) => {
         firestore().collection('exercises').add({
-            muscleGroup: muscleGroup,
+            muscleGroup: capitalizeEachWord(muscleGroup),
             name: capitalizeEachWord(values.name),
             reps: parseInt(values.reps, 10),
             sets: parseInt(values.sets, 10),
