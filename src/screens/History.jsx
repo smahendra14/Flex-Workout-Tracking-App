@@ -41,7 +41,10 @@ const History = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-        <Calendar onDayPress={handleDateSelect}/>
+        <Calendar 
+          style={styles.calendar} 
+          onDayPress={handleDateSelect}
+        />
         <Text style={styles.headerText}>Exercise History for {selectedDate}:</Text>
         <ScrollView style={styles.exerciseContainer}>
             {/* {selectedDate && (
@@ -85,6 +88,10 @@ const History = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    calendar: {
+      borderBottomWidth: 2,
+      borderBottomColor: '#D9D9D9',
     },
     headerText: {
         textAlign: 'center',
