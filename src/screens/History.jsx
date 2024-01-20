@@ -11,6 +11,10 @@ const History = ({navigation}) => {
     setSelectedDate(date.dateString);
   };
 
+  const capitalizeEachWord = (str) => {
+    return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};
+
   useEffect(() => {
     const fetchExerciseHistory = async () => {
       if (selectedDate) {
@@ -18,8 +22,13 @@ const History = ({navigation}) => {
           // Use the selected date as the collection name
           const snapshot = await firestore().collection(selectedDate).get();
 
-          const exercises = snapshot.docs.map((doc) => doc.data());
-          setExerciseHistory(exercises);
+          const exercises = snapshot.docs.map((doc) => doc.data());  
+          const groupedExercises = exercises.reduce((acc, exercise) => {
+            const muscleGroup = exercise.muscleGroup || 'Other';
+            acc[muscleGroup] = [...(acc[muscleGroup] || []), exercise];
+            return acc;
+          }, {});       
+          setExerciseHistory(groupedExercises);
         } catch (error) {
           console.error('Error fetching exercise history:', error);
         }
@@ -27,23 +36,37 @@ const History = ({navigation}) => {
     };
 
     fetchExerciseHistory();
+    console.log(exerciseHistory);
   }, [selectedDate]);
 
   return (
     <View style={styles.container}>
         <Calendar onDayPress={handleDateSelect}/>
-
+        <Text style={styles.headerText}>Exercise History for {selectedDate}:</Text>
         <ScrollView style={styles.exerciseContainer}>
-            {selectedDate && (
+            {/* {selectedDate && (
                 <>
-                <Text style={styles.headerText}>Exercise History for {selectedDate}:</Text>
+                
                 {exerciseHistory.map((exercise, index) => (
                     <View style={styles.exerciseCard} key={index}>
                         <Text style={styles.exerciseText}>{exercise.name}: {exercise.sets} x {exercise.reps} ({exercise.weight} lbs.)</Text>
                     </View>
                 ))}
                 </>
-            )}
+            )} */}
+            {selectedDate &&
+            Object.entries(exerciseHistory).map(([muscleGroup, groupExercises]) => (
+            <View key={muscleGroup} style={styles.muscleGroupingContainer}>
+              <Text style={styles.muscleGroupHeader}>{capitalizeEachWord(muscleGroup)}</Text>
+              {groupExercises.map((exercise, index) => (
+                <View style={styles.exerciseCard} key={index}>
+                  <Text style={styles.exerciseText}>
+                    {exercise.name}: {exercise.sets} x {exercise.reps} ({exercise.weight} lbs.)
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
         </ScrollView>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -73,7 +96,22 @@ const styles = StyleSheet.create({
     exerciseCard: {
         backgroundColor: '#bf5700',
         margin : 10,
-        marginHorizontal: 30,
+        marginHorizontal: 20,
+        borderRadius: 12,
+    },
+    muscleGroupingContainer: {
+      backgroundColor: '#D9D9D9',
+      margin: 10,
+      marginHorizontal: 30,
+      borderRadius: 12,
+      padding: 4,
+    },
+    muscleGroupHeader: {
+      fontSize: 20,
+      color: 'black',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginVertical: 4,
     },
     exerciseText: {
         color: 'white',
