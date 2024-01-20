@@ -1,5 +1,8 @@
 import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+
+// import components
+import DropdownComponent from '../components/DropdownComponent'
 
 // screens
 import AddWorkout from './AddWorkout';
@@ -21,12 +24,19 @@ import firestore from '@react-native-firebase/firestore';
 
 const FormikNewExercise = ({navigation}) => {
 
+    const [isMuscleSelected, setIsMuscleSelected] = useState(false);
+
+    const updateIsMuscleSelected = (isSelected : boolean) => {
+        setIsMuscleSelected(isSelected);
+      };
+
     const capitalizeEachWord = (str) => {
         return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
     };
 
     const storeExerciseInfo = (values) => {
         firestore().collection('exercises').add({
+            muscleGroup: DropdownComponent,
             name: capitalizeEachWord(values.name),
             reps: parseInt(values.reps, 10),
             sets: parseInt(values.sets, 10),
@@ -36,11 +46,14 @@ const FormikNewExercise = ({navigation}) => {
         });
     };
 
+    
+
     return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.headerText}>
         Complete the Fields Below to Add a New Exercise to Your Workout
       </Text>
+      <DropdownComponent setIsMuscleSelected={updateIsMuscleSelected}/>
       <Formik
        initialValues={{ name: '', reps: '', sets: '', weight: '', rest: '', notes: ''}}
        validationSchema={exerciseSchema}
@@ -104,8 +117,8 @@ const FormikNewExercise = ({navigation}) => {
                 onChangeText={handleChange('notes')}
             />
             <TouchableOpacity
-                disabled={!isValid}
-                style={isValid ? styles.button : styles.disabledButton}
+                disabled={!isValid || !isMuscleSelected}
+                style={(isValid && isMuscleSelected) ? styles.button : styles.disabledButton}
                 onPress={handleSubmit}
             >
                 <Text style={styles.buttonText}>
@@ -131,17 +144,21 @@ const styles = StyleSheet.create({
         fontSize: 22,
         color: 'black',
         margin: 15,
+        marginTop: 24,
+        fontWeight: 'bold',
     },
     wideInput: {
         backgroundColor: '#D9D9D9',
         margin: 15,
         padding: 15,
+        fontSize: 16,
     },
     halfInput: {
         backgroundColor: '#D9D9D9',
         margin: 15,
         width: '40%',
         padding: 15,
+        fontSize: 16,
     },
     halfInputContainer: {
         flexDirection: 'row',
@@ -150,13 +167,13 @@ const styles = StyleSheet.create({
     button: {
         margin: 15,
         backgroundColor: '#139E29',
-        height: 50,
+        height: 55,
         justifyContent: 'center',
     },
     disabledButton: {
         margin: 15,
         backgroundColor: '#139E29',
-        height: 50,
+        height: 55,
         justifyContent: 'center',
         opacity: 0.5,
     },
