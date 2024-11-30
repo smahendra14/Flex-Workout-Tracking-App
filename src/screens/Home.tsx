@@ -17,6 +17,11 @@ const Home = ({navigation}: HomeProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.newWorkoutButton}
+          onPress={() => navigation.navigate('WorkoutTemplates')}>
+            <Text style={styles.newWorkoutText}>Load from Template</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.newWorkoutButton}
           onPress={() => navigation.navigate('History')}>
             <Text style={styles.newWorkoutText}>View History</Text>
         </TouchableOpacity>

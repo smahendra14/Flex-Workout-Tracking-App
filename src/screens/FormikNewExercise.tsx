@@ -2,7 +2,7 @@ import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, TextInput } fro
 import React, { useState } from 'react';
 
 // import components
-import DropdownComponent from '../components/DropdownComponent'
+import ExerciseDropdown from '../components/ExerciseDropdown';
 
 // screens
 import AddWorkout from './AddWorkout';
@@ -11,19 +11,20 @@ import AddWorkout from './AddWorkout';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
+// Firestore
+import firestore from '@react-native-firebase/firestore';
+import { Dropdown } from 'react-native-element-dropdown';
+import DropdownComponent from '../components/DropdownComponent';
+
 const exerciseSchema = Yup.object().shape({
-    name: Yup.string().required('Exercise name is required'),
     reps: Yup.number().required('Number of reps is required').positive().integer(),
     sets: Yup.number().required('Number of sets is required').positive().integer(),
     weight: Yup.number().required('Weight is required').min(0, 'Weight can not be negative'),
     rest: Yup.number().required('Rest is required').min(0, 'Rest can not be negative').integer(),
 });
-// Firestore
-import firestore from '@react-native-firebase/firestore';
-
 
 const FormikNewExercise = ({navigation}) => {
-
+    const [selectedExercise, setSelectedExercise] = useState(null);
     const [isMuscleSelected, setIsMuscleSelected] = useState(false);
     const [muscleGroup, setMuscleGroup] = useState();
 
@@ -40,27 +41,30 @@ const FormikNewExercise = ({navigation}) => {
     };
 
     const storeExerciseInfo = (values) => {
+        if (!selectedExercise) return;
+
         firestore().collection('exercises').add({
-            muscleGroup: capitalizeEachWord(muscleGroup),
-            name: capitalizeEachWord(values.name),
+            muscleGroup: capitalizeEachWord(selectedExercise.muscleGroup),
+            name: selectedExercise.label,
             reps: parseInt(values.reps, 10),
             sets: parseInt(values.sets, 10),
             weight: parseFloat(values.weight),
             rest: parseInt(values.rest, 10),
-            notes: values.notes,
+            notes: values.notes || '',
         });
     };
-
-    
 
     return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.headerText}>
         Complete the Fields Below to Add a New Exercise to Your Workout
       </Text>
+      
+      {/* Replace DropdownComponent with ExerciseDropdown */}
       <DropdownComponent setIsMuscleSelected={updateIsMuscleSelected} setMuscleGroup={updateMuscleGroup}/>
+      
       <Formik
-       initialValues={{ name: '', reps: '', sets: '', weight: '', rest: '', notes: ''}}
+       initialValues={{ reps: '', sets: '', weight: '', rest: '', notes: ''}}
        validationSchema={exerciseSchema}
        onSubmit={ values => {
         console.log(values);
@@ -75,12 +79,7 @@ const FormikNewExercise = ({navigation}) => {
          handleSubmit,
        }) => (
          <>
-            <TextInput
-                style={styles.wideInput}
-                placeholder="Exercise Name"
-                value={values.name}
-                onChangeText={handleChange('name')}
-            />
+            {/* Exercise name is now from the dropdown, so removed that input */}
             <View style={styles.halfInputContainer}>
                 <TextInput
                     style={styles.halfInput}
@@ -111,19 +110,18 @@ const FormikNewExercise = ({navigation}) => {
                     keyboardType="numeric"
                     value={values.rest}
                     onChangeText={handleChange('rest')}
-
                 />
             </View>
             <TextInput
                 style={styles.wideInput}
-                placeholder="Notes"
+                placeholder="Notes (Optional)"
                 multiline
                 value={values.notes}
                 onChangeText={handleChange('notes')}
             />
             <TouchableOpacity
-                disabled={!isValid || !isMuscleSelected}
-                style={(isValid && isMuscleSelected) ? styles.button : styles.disabledButton}
+                disabled={!isValid || !selectedExercise}
+                style={(isValid && selectedExercise) ? styles.button : styles.disabledButton}
                 onPress={handleSubmit}
             >
                 <Text style={styles.buttonText}>
