@@ -6,19 +6,24 @@ import {
   TouchableOpacity, 
   ScrollView, 
   StyleSheet, 
-  SafeAreaView 
+  SafeAreaView, 
+  Alert
 } from 'react-native';
 
 import ExerciseDropdown from '../components/ExerciseDropdown';
 
+// firebase
+import firestore from '@react-native-firebase/firestore';
+
+
 // Muscle group options
 const MUSCLE_GROUPS = [
-  'Full Body', 
   'Chest', 
   'Back', 
   'Legs', 
   'Shoulders', 
-  'Arms', 
+  'Biceps', 
+  'Triceps',
   'Core'
 ];
 
@@ -67,16 +72,45 @@ const CreateTemplate = () => {
   };
 
   // Save workout template
-  const saveWorkoutTemplate = () => {
-    // Here you would typically save to your backend or local storage
-    const workoutTemplate = {
-      name: workoutName,
-      muscleGroups: selectedMuscleGroups,
-      exercises: exercises
-    };
-    
-    console.log('Workout Template:', workoutTemplate);
-    // Add your save logic here
+  const saveWorkoutTemplate = async () => {
+    try { 
+      if (!workoutName.trim()) { 
+        Alert.alert('Validation Error', 'Please enter a workout name');
+        return;
+      }
+      if (exercises.length === 0) { 
+        Alert.alert('Validation Error', 'Please add at least one exercise');
+        return;
+      }
+  
+      const workoutTemplate = {
+        templateName: workoutName,
+        muscleGroups: selectedMuscleGroups,
+        exercises: exercises.map(exercise => ({ 
+          isCustom: true, // Changed to true for user-created templates
+          name: exercise.label,
+          muscleGroup: exercise.muscleGroup || '',
+          reps: exercise.reps,
+          sets: exercise.sets,
+        })),
+      };
+  
+      // Add document to WorkoutTemplates collection
+      await firestore()
+        .collection('WorkoutTemplates')
+        .add(workoutTemplate);
+  
+      // Optional: show success message
+      Alert.alert('Success', `Workout template "${workoutName}" saved successfully!`);
+  
+      // Reset form after saving
+      setWorkoutName('');
+      setSelectedMuscleGroups([]);
+      setExercises([]);
+    } catch (error) { 
+      console.error('Error saving workout template: ', error);
+      Alert.alert('Error', 'Failed to save workout template. Please try again.');
+    }
   };
 
   return (

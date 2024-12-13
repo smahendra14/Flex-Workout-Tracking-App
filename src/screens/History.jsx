@@ -36,7 +36,7 @@ const History = ({navigation}) => {
     };
 
     fetchExerciseHistory();
-    console.log(exerciseHistory);
+    // console.log(exerciseHistory);
   }, [selectedDate]);
 
   return (
