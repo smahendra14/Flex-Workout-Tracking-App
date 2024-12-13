@@ -87,7 +87,7 @@ const CreateTemplate = () => {
         templateName: workoutName,
         muscleGroups: selectedMuscleGroups,
         exercises: exercises.map(exercise => ({ 
-          isCustom: true, // Changed to true for user-created templates
+          isCustom: false, 
           name: exercise.label,
           muscleGroup: exercise.muscleGroup || '',
           reps: exercise.reps,

@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, TouchableOpacity, Text, View, FlatList, ActivityIndicator, Modal, TextInput, Button } from 'react-native';
+import { SafeAreaView, StyleSheet, TouchableOpacity, Text, View, FlatList, ActivityIndicator, Modal, TextInput, Button, Alert } from 'react-native';
 
 // firebase
 import firestore from '@react-native-firebase/firestore';
+firestore().settings({ persistence: true });
 
 import { useNavigation } from '@react-navigation/native';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const WorkoutTemplates = () => {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteConfirmModalVisible, setDeleteConfirmModalVisible] = useState(false);
   const navigation = useNavigation();
   const db = firestore();
 
@@ -18,11 +22,16 @@ const WorkoutTemplates = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const querySnapshot = await db.collection('WorkoutTemplates').get();
-        const fetchedTemplates = [];
-        querySnapshot.forEach(doc => {
-          fetchedTemplates.push({ id: doc.id, ...doc.data() });
-        });
+        // Limit to first 10 templates
+        const querySnapshot = await db.collection('WorkoutTemplates')
+          .limit(1)
+          .get();
+        
+        const fetchedTemplates = querySnapshot.docs.map(doc => ({
+          id: doc.id, 
+          ...doc.data()
+        }));
+        
         setTemplates(fetchedTemplates);
       } catch (error) {
         console.error('Error fetching templates: ', error);
@@ -30,7 +39,8 @@ const WorkoutTemplates = () => {
         setLoading(false);
       }
     };
-
+    
+  
     fetchTemplates();
   }, [db]);
 
@@ -48,9 +58,39 @@ const WorkoutTemplates = () => {
     }
   };
 
+  const handleDeleteTemplate = async () => { 
+    if (selectedTemplate) {
+      try {
+        // Delete the template from Firestore
+        await db.collection('WorkoutTemplates').doc(selectedTemplate.id).delete();
+        
+        // Remove the template from local state
+        setTemplates(prevTemplates => 
+          prevTemplates.filter(template => template.id !== selectedTemplate.id)
+        );
+        
+        // Close the delete confirmation modal
+        setDeleteConfirmModalVisible(false);
+      } catch (error) {
+        console.error('Error deleting template: ', error);
+        Alert.alert('Delete Error', 'Could not delete the template. Please try again.');
+      }
+    }
+  }
+
   const renderTemplate = ({ item }) => (
     <View style={styles.templateCard}>
-      <Text style={styles.templateName}>{item.templateName}</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <Text style={styles.templateName}>{item.templateName}</Text>
+        <TouchableOpacity 
+          onPress={() => {
+            setSelectedTemplate(item);
+            setDeleteConfirmModalVisible(true);
+          }}
+        >
+          <Icon name="delete" size={24} color="#F44336" />
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={item.exercises}
         keyExtractor={(exercise, index) => `${item.id}-exercise-${index}`}
@@ -94,7 +134,8 @@ const WorkoutTemplates = () => {
         renderItem={renderTemplate}
         contentContainerStyle={styles.templatesList}
       />
-
+      
+      {/*Edit Template Modal*/}
       <Modal visible={modalVisible} animationType="slide">
         <SafeAreaView style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Edit Template</Text>
@@ -151,6 +192,36 @@ const WorkoutTemplates = () => {
           <Button title="Close" onPress={() => setModalVisible(false)} />
         </SafeAreaView>
       </Modal>
+      {/* Delete Confirmation Modal */}
+      <Modal
+        visible={deleteConfirmModalVisible}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.deleteModalOverlay}>
+          <View style={styles.deleteModalContainer}>
+            <Text style={styles.deleteModalTitle}>Delete Template</Text>
+            <Text style={styles.deleteModalText}>
+              Are you sure you want to delete the template "{selectedTemplate?.name}"?
+            </Text>
+            <View style={styles.deleteModalButtonContainer}>
+              <TouchableOpacity 
+                style={[styles.deleteModalButton, styles.deleteModalCancelButton]}
+                onPress={() => setDeleteConfirmModalVisible(false)}
+              >
+                <Text style={styles.deleteModalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.deleteModalButton, styles.deleteModalConfirmButton]}
+                onPress={handleDeleteTemplate}
+              >
+                <Text style={styles.deleteModalButtonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -253,5 +324,50 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
+  },
+  deleteModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteModalContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  deleteModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  deleteModalText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  deleteModalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  deleteModalButton: {
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  deleteModalCancelButton: {
+    backgroundColor: '#CCCCCC',
+  },
+  deleteModalConfirmButton: {
+    backgroundColor: '#F44336',
+  },
+  deleteModalButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
